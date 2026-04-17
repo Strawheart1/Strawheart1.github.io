@@ -1,0 +1,1150 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>NUMPY FROM SCRATCH</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="32d6a32b-3eaf-80f2-b6a8-f33f3ef1a707" class="page serif"><header><img class="page-cover-image" src="download.png" style="object-position:center 50%"/><div class="page-header-icon page-header-icon-with-cover"><img class="icon" src="download_(1).png"/></div><h1 class="page-title" dir="auto">NUMPY FROM SCRATCH</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><div style="display:contents" dir="ltr"><nav id="3346a32b-3eaf-80fb-8d66-c9df98393ee0" class="block-color-gray table_of_contents"><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#32d6a32b-3eaf-8017-bacc-f57a287a053d">1.<strong>Introduction</strong></a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#32d6a32b-3eaf-80cd-9c53-d70b04d1e6f4">2. Getting Started</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#3346a32b-3eaf-80e7-905d-c628526fe4e4">3. Numpy Array</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#3366a32b-3eaf-800b-8456-c133e4352773">4. Array Reshaping</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#3366a32b-3eaf-80ed-9b59-f079dd19b42b">5. Arithmetic Operations</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#3376a32b-3eaf-80a8-a101-f527de64232c">6. Indexing and Slicing</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#33a6a32b-3eaf-802d-a18d-c4881856b708">7. Broadcasting</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#33f6a32b-3eaf-80ca-b8cf-d3587aef9200">8. Universal Functions(uFuncs)</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#33f6a32b-3eaf-8042-b77b-c5658bbe3f01">9. Sorting and Searching</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#33f6a32b-3eaf-80d8-b4c8-ec83b8deb71c">10. Stacking and Splitting Arrays</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#33f6a32b-3eaf-804b-908e-ee4b97d0042e">11. Numpy Random Module</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#33f6a32b-3eaf-80dd-8509-cd91f2a05033">12. Linear Algebra with Numpy</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#33f6a32b-3eaf-8051-971c-ff6aa714f685">13.Quick Cheat Sheet</a></div><div class="table_of_contents-item table_of_contents-indent-0"><a class="table_of_contents-link" href="#33f6a32b-3eaf-801a-bbbb-e0252e8d36b4">Final Notes</a></div><div class="table_of_contents-item table_of_contents-indent-1"><a class="table_of_contents-link" href="#33f6a32b-3eaf-8068-8c38-cc08e48c1582">Final Verdict</a></div></nav></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">1.<strong>Introduction</strong></summary><div class="indented"><div style="display:contents" dir="auto"><ul id="32d6a32b-3eaf-804f-ab26-c22d2706a50f" class="bulleted-list"><li style="list-style-type:disc"><strong>What is Numpy? </strong></li></ul></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-802e-af43-f7dd7996b524" class="">NumPy (Numerical Python) is a Python library used for fast and efficient numerical computations with arrays.<br/></p></div><div style="display:contents" dir="auto"><ul id="32d6a32b-3eaf-8066-a7f5-c99d250813ba" class="bulleted-list"><li style="list-style-type:disc"><strong>Why use Numpy?</strong></li></ul></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-80ad-8a26-d9ee4448c0bc" class="">NumPy is a Python library that lets you efficiently store, manipulate, and perform fast mathematical operations on large arrays of numbers.</p></div><div style="display:contents" dir="auto"><ul id="32d6a32b-3eaf-80aa-b01d-f34828466048" class="bulleted-list"><li style="list-style-type:disc"><strong>Who’s  it for?</strong></li></ul></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-80f2-bb61-df639767311e" class=""><strong>NumPy is for anyone who works with numerical data in Python</strong>, including:</p></div><div style="display:contents" dir="auto"><ul id="32d6a32b-3eaf-8005-b2f5-c7c25640a9e8" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-orange"><strong>Data scientists</strong></mark> – analyzing datasets, computing statistics, preparing data for machine learning</li></ul></div><div style="display:contents" dir="auto"><ul id="32d6a32b-3eaf-8076-b5f8-d322d840d50c" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-orange"><strong>Machine learning / AI engineers</strong></mark> – handling tensors, matrices, and input data for models</li></ul></div><div style="display:contents" dir="auto"><ul id="32d6a32b-3eaf-8070-8712-f03cfdf48d71" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-orange"><strong>Scientists &amp; researchers</strong></mark> – performing simulations, experiments</li></ul></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-80a5-bd17-e0ee678d78e8" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="32d6a32b-3eaf-8029-8aca-d09bb25d712c" class="bulleted-list"><li style="list-style-type:disc"><strong>Installing NumPy </strong></li></ul></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-8010-bd01-ddbe951998b1" class=""><em><strong>If you have Anaconda/Jupyter:</strong></em></p></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-80be-b155-c544604a379b" class="">NumPy comes pre-installed with Anaconda/Jupyter.</p></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-805c-a24e-e89b5ee5fff1" class="">Just type this at the top of your notebook:</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="32d6a32b-3eaf-80e5-a20c-ee0337e98353" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np</code></pre></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-8007-a654-c5b222d48cbf" class="">You&#x27;re ready to go.</p></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-80ff-911d-cd4bbb292fce" class=""><strong>If you don&#x27;t have Anaconda:</strong></p></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-80c2-9fd5-ff0a2410b8c0" class="">Open your terminal or command prompt and run:</p></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-8074-bcee-ebe827ba45e8" class=""><code>pip install numpy</code></p></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-80ce-8a19-cf84ed0e259f" class="">Then import it the same way:</p></div><div style="display:contents" dir="auto"><pre id="32d6a32b-3eaf-8010-a6c5-da961cf82817" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np</code></pre></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-8042-8218-d8caa3399d63" class=""><strong>What does </strong><code><strong>as np</strong></code><strong> mean? </strong>It&#x27;s just a shortcut.</p></div><div style="display:contents" dir="auto"><ul id="32f6a32b-3eaf-808e-822a-ca69eefcc73f" class="bulleted-list"><li style="list-style-type:disc">Verify it’s installed:</li></ul></div><div style="display:contents" dir="auto"><p id="32f6a32b-3eaf-8080-8e4e-dedf341630dc" class="">And to verify its installed you can put this in your script in your jupyter notebook or your python script ,we’d look in to that later but for now  :</p></div><div style="display:contents" dir="auto"><pre id="32f6a32b-3eaf-80be-b137-ffbfa659f9ba" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+print(np.__version__)
+
+#Result example:2.4.3</code></pre></div><div style="display:contents" dir="auto"><p id="32f6a32b-3eaf-8067-aafb-cf9a25b08a56" class="">this will print out a  result of the version you are currently using ,these may not be the </p></div><div style="display:contents" dir="auto"><hr id="3346a32b-3eaf-8013-9a29-e76a56e0a40c"/></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-805f-abe8-cd039b2537b1" class="">
+</p></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">2. Getting Started</summary><div class="indented"><div style="display:contents" dir="auto"><ul id="32d6a32b-3eaf-8093-9253-c598334aa8fc" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-yellow"><strong>Importing NumPy</strong></mark><strong>:</strong></li></ul></div><div style="display:contents" dir="auto"><blockquote id="32d6a32b-3eaf-802e-a37b-ee9c3ef56ec9" class=""><mark class="highlight-default"><mark class="highlight-yellow_background">I know i have added this before but it is really important so please before you can use NumPy, you need to import it into your Python script. This is the very first thing you do to get started.</mark></mark></blockquote></div><div style="display:contents" dir="auto"><pre id="32d6a32b-3eaf-80a6-b18a-e2a5b069804b" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np</code></pre></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-8069-8a24-eaed54d95ff5" class="block-color-default"><br/>That is it.<br/><br/>The <code>np</code> part is just a shortcut or well said an alias so that instead of typing <code>numpy</code> every time, you just type <code>np</code>..<br/><br/><code><span style="border-bottom:0.05em solid">as np</span></code><span style="border-bottom:0.05em solid"> is a standard alias used to shorten </span><code><span style="border-bottom:0.05em solid">numpy</span></code><span style="border-bottom:0.05em solid"> when writing code.</span><br/><br/></p></div><div style="display:contents" dir="auto"><ul id="32d6a32b-3eaf-80a2-a792-f2bb72db07dd" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-yellow"><strong>Your First NumPy Array</strong></mark>:</li></ul></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-8075-b351-e3a6dab27c48" class="">An array is just a list of numbers that NumPy can work with. Here is how you create one:</p></div><div style="display:contents" dir="auto"><pre id="32d6a32b-3eaf-8072-a15b-ffa063dbcf62" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+my_array = np.array([10, 20, 30, 40, 50])
+print(my_array)
+
+Output:
+[10 20 30 40 50]</code></pre></div><div style="display:contents" dir="auto"><p id="32d6a32b-3eaf-8066-845d-c9902ee937c6" class="">This is your first numpy array ,and to reflect more on that we would look at types of arrays ,1D array and 2D array and 3D array..</p></div><div style="display:contents" dir="auto"><pre id="3316a32b-3eaf-80b6-9214-c33bec4f2bab" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+a = np.array([10, 20, 30])          # 1D array
+b = np.array([[1, 2], [3, 4]])      # 2D array
+c = np.array([[[1,  2,  3],         # 3D  array (2, 2, 3)
+               [4,  5,  6]],
+              [[7,  8,  9],
+               [10, 11, 12]]])</code></pre></div><div style="display:contents" dir="auto"><ul id="3306a32b-3eaf-807d-b8a2-cf7b3e79fc38" class="bulleted-list"><li style="list-style-type:disc">Use case: Setting up a NumPy environment for a data analysis project</li></ul></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-8057-9e71-dbc4d50c907a" class=""><br/>When starting a data analysis project, NumPy is used to set up a fast and efficient environment for working with numerical data.</p></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-806b-9797-e5ddcd9a30ff" class="">After installing and importing Numpy , as shown earlier ,then  you load or create your dataset as a NumPy array this way :</p></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-80dd-86f8-efbf026f901d" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">data = np.array([10, 20, 30, 40, 50])
+
+
+</code></pre></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-8058-be69-cc09c312c535" class="">And once  the data is in an array, you can quickly perform operations like this:</p></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-8077-8956-eb5e555f35f2" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">print(data.mean())   # average
+print(data.sum())    # total
+print(data.shape)    # structure of the data</code></pre></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">3. Numpy Array</summary><div class="indented"><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.5em;line-height:1.3;margin:0">Creating Arrays :</summary><div class="indented"><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-802e-ae74-cb480f004c9c" class="">Numpy arrays can be created in several ways :</p></div><div style="display:contents" dir="auto"><ul id="3346a32b-3eaf-80b8-909d-f89b3cb9b0d9" class="bulleted-list"><li style="list-style-type:disc"><strong>From a List</strong>:</li></ul></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-80fc-96f9-c12596fb33df" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+arr1 = np.array([1, 2, 3, 4])
+</code></pre></div><div style="display:contents" dir="auto"><ul id="3346a32b-3eaf-809d-85c0-d4c12a5e9f64" class="bulleted-list"><li style="list-style-type:disc"><strong>2D array (matrix)</strong>:</li></ul></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-809b-9f99-c5d32ddbfe9d" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+arr2 = np.array([[1, 2], [3, 4]])</code></pre></div><div style="display:contents" dir="auto"><ul id="3346a32b-3eaf-8040-afdc-ce828a8098b1" class="bulleted-list"><li style="list-style-type:disc"><strong>3D array </strong></li></ul></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-8034-abc7-d804f8946a8a" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+a=np.array([[[1,2,3],[1,2,3],[4,5,6]]])
+a.ndim   #result is 3 </code></pre></div><div style="display:contents" dir="auto"><ul id="3346a32b-3eaf-8095-bc15-e2be37278e80" class="bulleted-list"><li style="list-style-type:disc"><strong>Range of numbers</strong> :</li></ul></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-80da-abb9-ce041c071ae2" class=""><code>arange</code>   is a NumPy function used to generate a <strong>sequence of numbers</strong>, usually for loops.</p></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-8053-9d4c-e0933da72539" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+arr =np.arange(1,10,2) #start #stop #step
+arr      #result: is array([1, 3, 5, 7, 9])</code></pre></div><div style="display:contents" dir="auto"><ul id="3346a32b-3eaf-80b2-8c90-ee35c2f8b5f9" class="bulleted-list"><li style="list-style-type:disc"><strong>Linspace</strong>:</li></ul></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-800a-b43a-c2b1211bd759" class=""><code>linspace</code> is a NumPy function used to create <strong>evenly spaced numbers over a specified range (creates evenly spaced values between two points).</strong></p></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-80c7-a116-e9bda4a8067a" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+arr=np.linspace(0,1,5) #start #stop #numbers to generate
+arr      #result:  array([0.  , 0.25, 0.5 , 0.75, 1.  ])</code></pre></div><div style="display:contents" dir="auto"><ul id="3346a32b-3eaf-8032-a272-c8c5033f4f84" class="bulleted-list"><li style="list-style-type:disc"><strong>Logspace</strong>:</li></ul></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-8030-b279-e94c45c4dd04" class=""><code>logspace</code> is a NumPy function used to <strong>creates values spaced on a logarithmic scale</strong>.</p></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-802e-a163-eb2a3935cd48" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+arr =np.logspace(1,3,3) #logarithmic scale array  -&gt; 10^1 -&gt; 10^3 .... 3 points
+arr    #result: array([  10.,  100., 1000.])</code></pre></div><div style="display:contents" dir="auto"><ul id="3346a32b-3eaf-802a-807c-f6e518594b15" class="bulleted-list"><li style="list-style-type:disc"><strong>Zeros</strong>:<br/><code>zeros</code> is a NumPy function used to create an array filled with <strong>0s</strong>.</li></ul></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-80c4-b401-f211fca95ac7" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+arr=np.zeros([2,3])   #rows,columns   and array full of zeros
+arr                 #Result :array([[0., 0., 0.], [0., 0., 0.]])
+                    OR
+arr =np.zeros(4)      #1D array
+arr                   #Result :array([0., 0., 0., 0.])
+      </code></pre></div><div style="display:contents" dir="auto"><ul id="3346a32b-3eaf-803f-9a40-f635892cca90" class="bulleted-list"><li style="list-style-type:disc"><strong>Ones</strong> :</li></ul></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-80d5-8407-f2f4a210d0b9" class=""><code>ones</code> is a NumPy function used to create an array filled with <strong>1s</strong>.</p></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-8020-b82c-f9a6fdc52afb" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+arr = np.ones((2, 3))
+arr   #result :array([[1., 1., 1.],[1., 1., 1.]])</code></pre></div><div style="display:contents" dir="auto"><ul id="3346a32b-3eaf-8055-b24f-d359b219ab9f" class="bulleted-list"><li style="list-style-type:disc"><strong>Full</strong>:</li></ul></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-80f6-8742-ecdc8233026a" class=""><code>full</code> is a NumPy function used to create an array of a <strong>specified shape filled with any value you choose</strong>. It’s more general than <code>zeros</code> or <code>ones</code>.</p></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-80e4-8450-cf7f93044bc8" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+arr=np.full(10,4)   #array full of any value
+arr                 #Result:array([4, 4, 4, 4, 4, 4, 4, 4, 4, 4])
+                        
+                       ALSO
+arr=np.full([2,4],7)   #two rows four columns of seven [rows,column],default value
+arr                    #array([[7, 7, 7, 7],[7, 7, 7, 7]])
+                          </code></pre></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-809b-a7a8-e670a32e57be" class="">
+</p></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.5em;line-height:1.3;margin:0">Array data types &amp; Type casting:</summary><div class="indented"><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-80dd-b21b-ea0336503d03" class="">So quick one ,ill be showing something and why this it is the case as related to data types so hold on to it :</p></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-8077-801d-dc9fb3faaeef" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+arr =np.array([1,2,3.1,4,5])</code></pre></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-80a2-858b-e548084d7834" class="">Another example:</p></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-8022-b457-efebf226015b" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+arr =np.array([1.1,2.1,3.1,4.1,5])
+arr     #array([1.1, 2.1, 3.1, 4.1, 5. ])
+
+</code></pre></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-8011-9c0b-d703e201b298" class="">YET Another example:</p></div><div style="display:contents" dir="auto"><pre id="3346a32b-3eaf-807b-b646-ca5f53331913" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+arr=np.array([&quot;book&quot;,1,2,3,4.6])
+arr  #array([&#x27;book&#x27;, &#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;, &#x27;4.6&#x27;], dtype=&#x27;&lt;U32&#x27;)</code></pre></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-807f-9200-ee1f3ce60323" class="">
+</p></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-8004-9788-fe162956cdf2" class=""><em><mark class="highlight-default"><strong>COMMON DATA TYPES</strong></mark></em></p></div><div style="display:contents" dir="ltr"><table id="3366a32b-3eaf-8000-bdff-e3525f47907c" class="simple-table"><tbody><div style="display:contents" dir="ltr"><tr id="3366a32b-3eaf-8052-b8dd-cc4f29ac6431"><td id="goFl" class="" style="width:214.33333333333334px"><strong>DATA TYPE </strong></td><td id="mQ&gt;l" class="" style="width:214.33333333333334px"><strong>DESCRIPTION </strong></td><td id="qG@w" class="" style="width:214.33333333333334px"><strong>EXAMPLE VALUES</strong></td></tr></div><div style="display:contents" dir="ltr"><tr id="3366a32b-3eaf-80ad-9973-c37a8b32a7f7"><td id="goFl" class="" style="width:214.33333333333334px"><mark class="highlight-default"><strong>np.int32</strong></mark></td><td id="mQ&gt;l" class="" style="width:214.33333333333334px">32-bit integer (whole numbers)</td><td id="qG@w" class="" style="width:214.33333333333334px">-2, 0, 45, 100000</td></tr></div><div style="display:contents" dir="ltr"><tr id="3366a32b-3eaf-800c-b351-e512c0c3cda9"><td id="goFl" class="" style="width:214.33333333333334px"><strong>np.int64</strong></td><td id="mQ&gt;l" class="" style="width:214.33333333333334px">64-bit integer (larger range)</td><td id="qG@w" class="" style="width:214.33333333333334px">-5000000000, 42, 900000000000</td></tr></div><div style="display:contents" dir="ltr"><tr id="3366a32b-3eaf-801e-a2ef-cc9c0b384684"><td id="goFl" class="" style="width:214.33333333333334px"><strong>np.float32</strong></td><td id="mQ&gt;l" class="" style="width:214.33333333333334px">32-bit floating point (decimals, less precision)</td><td id="qG@w" class="" style="width:214.33333333333334px">3.14, -0.5, 2.7</td></tr></div><div style="display:contents" dir="ltr"><tr id="3366a32b-3eaf-8041-8729-fe8056055e16"><td id="goFl" class="" style="width:214.33333333333334px"><strong>np.float64</strong></td><td id="mQ&gt;l" class="" style="width:214.33333333333334px">64-bit floating point (more precise, default)</td><td id="qG@w" class="" style="width:214.33333333333334px">3.1415926535, -0.123456789</td></tr></div><div style="display:contents" dir="ltr"><tr id="3366a32b-3eaf-803e-a3a9-caf426aa022e"><td id="goFl" class="" style="width:214.33333333333334px"><strong>np.bool_</strong></td><td id="mQ&gt;l" class="" style="width:214.33333333333334px">Boolean (true/false)</td><td id="qG@w" class="" style="width:214.33333333333334px">True, False</td></tr></div><div style="display:contents" dir="ltr"><tr id="3366a32b-3eaf-80d1-9e4b-c1437165f4e3"><td id="goFl" class="" style="width:214.33333333333334px"><strong>np.str_</strong></td><td id="mQ&gt;l" class="" style="width:214.33333333333334px">String (text data)</td><td id="qG@w" class="" style="width:214.33333333333334px">&quot;hello&quot;, &quot;data”</td></tr></div><div style="display:contents" dir="ltr"><tr id="3366a32b-3eaf-80a4-b70f-cb72836ad5d1"><td id="goFl" class="" style="width:214.33333333333334px"><strong>np.object_</strong></td><td id="mQ&gt;l" class="" style="width:214.33333333333334px">Mixed or complex Python objects</td><td id="qG@w" class="" style="width:214.33333333333334px">[1, &quot;text&quot;, 3.5]</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-807b-8df3-d274f67dea1e" class="">You can as well change the data type of an array </p></div><div style="display:contents" dir="auto"><pre id="3366a32b-3eaf-80d8-bdde-fbec7e2cfb72" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr =np.array([1,2.4,3.1,4,5],dtype=np.int64)
+arr.dtype</code></pre></div><div style="display:contents" dir="auto"><h3 id="3366a32b-3eaf-8029-966d-f651e14bb429" class="">Type casting</h3></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-80e7-9ea3-ec6becbc058a" class="">So yes in <strong>NumPy</strong>, <strong>type casting</strong> (also called <strong>data type conversion</strong>) is the process of changing an array from one data type to another. Type casting may lead to data loss (e.g., converting float to int removes decimals).</p></div><div style="display:contents" dir="auto"><ul id="3366a32b-3eaf-80b2-97b8-faa7b1ff0984" class="bulleted-list"><li style="list-style-type:disc">Explicit Type Casting:</li></ul></div><div style="display:contents" dir="auto"><pre id="3366a32b-3eaf-80a1-abe4-ec9a0b26b9a9" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr = np.array([1, 2.4, 3.1, 4, 5])
+print(arr.dtype)  # float64 (default because of 2.4 and 3.1)
+
+# Convert to integers
+arr_int = arr.astype(np.int64)
+print(arr_int)    # [1 2 3 4 5]
+print(arr_int.dtype)  # int64
+
+# Convert to float32
+arrfl32 = arr.astype(np.float32)
+print(arrfl32)    # [1. 2.4 3.1 4. 5.]
+print(arrfl32.dtype)  # float32</code></pre></div><div style="display:contents" dir="auto"><ul id="3366a32b-3eaf-803e-8f7d-f968ae7a9d92" class="bulleted-list"><li style="list-style-type:disc">Implicit Type Casting:</li></ul></div><div style="display:contents" dir="auto"><pre id="3366a32b-3eaf-8028-a365-d6eb5439b911" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">arr1 = np.array([1, 2, 3], dtype=int)
+arr2 = np.array([1.5, 2.5, 3.5], dtype=float)
+
+result = arr1 + arr2
+print(result)       # [2.5 4.5 6.5]
+print(result.dtype) # float64</code></pre></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-80f4-be5f-f82c74e869f0" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="3366a32b-3eaf-80c4-beaa-c7b4dda02768" class="">Type Casting Error:</h3></div><div style="display:contents" dir="auto"><pre id="3366a32b-3eaf-80b4-8cfb-ff21b719d047" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">arr= np.array([&quot;1&quot;,&quot;2&quot;,&quot;hello&quot;])  #cannot convert a string into an integer or float 
+arr2=arr.astype(np.int64)
+arr2</code></pre></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.5em;line-height:1.3;margin:0">Array Attributes:</summary><div class="indented"><div style="display:contents" dir="auto"><ul id="3366a32b-3eaf-8000-ac9a-cbc8e0c8fa46" class="bulleted-list"><li style="list-style-type:disc">Shape</li></ul></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-80f7-bd5b-ff2361ed1e90" class="">This is how to check the dimensions of the array ,returns a <strong>tuple</strong> representing the size along each axis.</p></div><div style="display:contents" dir="auto"><pre id="3366a32b-3eaf-80d0-862a-f1132d0c1bc3" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+arr = np.array([[1, 2, 3], [4, 5, 6]])
+print(arr.shape)                          #(2, 3)    2 rows, 3 columns
+</code></pre></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-8049-a3db-fc8b627bddc2" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="3366a32b-3eaf-80eb-9695-e2bb946da25f" class="bulleted-list"><li style="list-style-type:disc">Size.</li></ul></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-807e-84f6-df66e23d9310" class="">This gives the total number of elements and gives the product (*) of the dimensions</p></div><div style="display:contents" dir="auto"><pre id="3366a32b-3eaf-804b-b2d5-cf1fd9504a8b" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+print(arr.size)      6   # 2*3</code></pre></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-8094-a5e4-c46d7e02ec73" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="3366a32b-3eaf-80c0-9412-db2b4e208d97" class="bulleted-list"><li style="list-style-type:disc">ndim</li></ul></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-802e-9373-d6f6f92d9f98" class="">This gives the number of dimensions</p></div><div style="display:contents" dir="auto"><pre id="3366a32b-3eaf-802c-ad48-e414fe1d2081" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">print(arr.ndim)   2  # 2D array</code></pre></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-80f7-9da3-cd032bd2f782" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="3346a32b-3eaf-8008-8d19-d7c9fcc2ec0a" class="bulleted-list"><li style="list-style-type:disc">dtype</li></ul></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-8088-b82a-ff0291b47c8e" class="">This tells you the data type of an element and what the array elements are stored as.</p></div><div style="display:contents" dir="auto"><pre id="3366a32b-3eaf-80dc-be36-ffbd766d9740" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">arr = np.array([1, 2, 3], dtype=np.float32)
+print(arr.dtype)                             #float32</code></pre></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-80c0-a192-d1c57086ecff" class="">
+</p></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-807d-8edd-d45e4129e740" class="">
+</p></div><div style="display:contents" dir="auto"><p id="3346a32b-3eaf-80d1-b3ed-ff374cc7dc1a" class="">
+</p></div></div></details></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">4. Array Reshaping</summary><div class="indented"><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-804b-8ef2-d70e171135d7" class=""><br/>In NumPy, <strong>array reshaping</strong> is about changing the shape (dimensions) of an array without altering its data. NumPy provides three main ways to do this: <code><strong>reshape</strong></code>, <code><strong>ravel</strong></code>, and <code><strong>flatten</strong></code>.</p></div><div style="display:contents" dir="auto"><ul id="3366a32b-3eaf-806e-a326-fa53f0072649" class="bulleted-list"><li style="list-style-type:disc">Reshape:</li></ul></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-8086-aa26-c99a712d14eb" class=""><code>reshape</code>  changes the shape of an array without changing the data and also returns a view (no new memory) when possible and you <strong>must provide a shape compatible</strong> with the number of elements.</p></div><div style="display:contents" dir="auto"><pre id="3366a32b-3eaf-8054-ac40-df7d71e3e67f" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr = np.array([[1, 2], [3, 4], [5, 6]])
+# shape = (3,2) → total elements = 6
+
+reshaped = arr.reshape(2, 3)  # new shape (2,3)
+print(reshaped)
+# [[1 2 3]
+#  [4 5 6]]</code></pre></div><div style="display:contents" dir="auto"><ul id="3366a32b-3eaf-8001-b720-d9ebbf5ecfe8" class="bulleted-list"><li style="list-style-type:disc">Ravel:</li></ul></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-805d-9b44-eb9759a77a7d" class=""><code>ravel</code> flattens the array into a <strong>1D array, r</strong>eturns a <strong>view whenever possible</strong> (changes to the raveled array may affect the original array).</p></div><div style="display:contents" dir="auto"><pre id="3366a32b-3eaf-80ed-85b8-d835e308bbb3" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">flat_view = arr.ravel()
+print(flat_view)
+# [1 2 3 4 5 6]
+
+flat_view[0] = 100
+print(arr)
+# [100 2 ...] → original array is modified because ravel often returns a view
+</code></pre></div><div style="display:contents" dir="auto"><ul id="3366a32b-3eaf-80eb-8c41-e64d9e7ec717" class="bulleted-list"><li style="list-style-type:disc">Flatten:</li></ul></div><div style="display:contents" dir="auto"><p id="3366a32b-3eaf-808d-8fe0-dd330b87cfc0" class=""><code>flatten</code> is used flatten an array into 1D.Always returns a copy, so the original array is not affected.</p></div><div style="display:contents" dir="auto"><pre id="3366a32b-3eaf-80f4-b1d2-cc21d508dd63" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">flat_copy = arr.flatten()
+flat_copy[0] = 100
+print(arr)        # original array unchanged
+print(flat_copy)  # first element changed</code></pre></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">5. Arithmetic Operations</summary><div class="indented"><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-800b-add1-fd2dd8c24e1c" class="">This section is about doing calculations on Numpy arrays, Operations are vectorized (no loops required).</p></div><div style="display:contents" dir="auto"><ul id="3376a32b-3eaf-803d-b0c3-cc3c33220f82" class="bulleted-list"><li style="list-style-type:disc"><strong>Element-wise operations (</strong><code><strong>+</strong></code><strong>, </strong><code><strong>-</strong></code><strong>, </strong><code><strong>*</strong></code><strong>, </strong><code>//</code>,<strong> </strong><code><strong>/</strong></code><strong>) :</strong></li></ul></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-8091-baa8-f4cf624a41c0" class=""><code><strong>+</strong></code><strong> -Addition</strong></p></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-80a4-b688-ea17fdc83ae5" class=""><code><strong>-</strong></code><strong> -Subtraction</strong></p></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-80bb-a9a1-f00e7bfdac8e" class=""><code><strong>*</strong></code><strong> -Multiplication</strong></p></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-80c1-b726-fa2ae6f0631c" class=""><code><strong>/</strong></code><strong> -Division</strong></p></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-806a-8195-e1aabb1bbbd4" class=""><code>//</code> -<strong>Floor division</strong></p></div><div style="display:contents" dir="auto"><pre id="3376a32b-3eaf-80d8-9716-e5486852ec2a" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">a=np.array([1,2,3,4,5,6])
+b=np.array([2,3,5,3.1,8,9])</code></pre></div><div style="display:contents" dir="auto"><pre id="3376a32b-3eaf-80eb-9df0-d57d9f838f90" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">print(a+b)    #[ 3.   5.   8.   7.1 13.  15. ]
+print(a-b)    #[-1.  -1.  -2.   0.9 -3.  -3. ]
+print(a/b)    #[0.5        0.66666667 0.6        1.29032258 0.625      0.66666667]
+print(a * b)   #[ 2.   6.  15.  12.4 40.  54. ]
+print(a // b)  #[0. 0. 0. 1. 0. 0.]</code></pre></div><div style="display:contents" dir="auto"><ul id="3376a32b-3eaf-80f3-b148-d4a39d74fdd4" class="bulleted-list"><li style="list-style-type:disc"><strong>Power and Modulus:</strong></li></ul></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-8066-9ee2-cc1b220a2f76" class=""><strong>Power (`</strong>`) → raises numbers</p></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-8010-853f-f7a4bc94e03b" class=""><strong>Modulus (</strong><code><strong>%</strong></code><strong>)</strong> → gives remainder</p></div><div style="display:contents" dir="auto"><pre id="3376a32b-3eaf-8090-97e9-eca52f5bbcbc" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">print(b%a)    #[0.  1.  2.  3.1 3.  3. ]
+print(a ** 2)  #[ 1  4  9 16 25 36]</code></pre></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-8022-800c-c50ffca2a862" class="">Explanation:</p></div><div style="display:contents" dir="auto"><ul id="3376a32b-3eaf-80c2-a76e-d4c0e8fc5454" class="bulleted-list"><li style="list-style-type:disc"><code>2^2 = 4</code>, <code>3^2 = 9</code></li></ul></div><div style="display:contents" dir="auto"><ul id="3376a32b-3eaf-80b9-873a-cd416e209107" class="bulleted-list"><li style="list-style-type:disc"><code>3 % 2 = 1</code> (remainder when divided)</li></ul></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-802a-8baa-d35c9e6ec723" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="3376a32b-3eaf-8026-bb46-c19c08ad3659" class="bulleted-list"><li style="list-style-type:disc"><strong>Aggregations</strong>(<code>sum</code>, <code>mean</code>, <code>min</code>, <code>max</code>, <code>std</code>):</li></ul></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-80a6-83c4-ed89b8908d83" class=""><code><strong>sum</strong></code> – total of all elements<br/><br/><code><strong>mean</strong></code> – average value<br/><br/><code><strong>min</strong></code> – smallest value<br/><br/><code><strong>max</strong></code> – largest value</p></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-80c2-95de-dcf343f4b259" class=""><code><strong>std</strong></code> – standard deviation (measure of spread)</p></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-8069-9eba-e9ba72c4368c" class=""><code>var</code> -(square of standard deviation)</p></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-8071-a894-e3859edfcb51" class=""><code>median</code> -(middle value)</p></div><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-804f-920b-ce9e4a467754" class="">
+</p></div><div style="display:contents" dir="auto"><pre id="3376a32b-3eaf-8074-bc15-d0413d353837" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">arr =np.array([1,2,3])
+
+print(np.sum(arr))         #6
+print(np.median(arr))      #2.0
+print(np.std(arr))         #0.816496580927726
+print(np.min(arr))         #1
+print(np.max(arr))         #3
+print(np.var(arr))         #0.6666666666666666
+</code></pre></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">6. Indexing and Slicing</summary><div class="indented"><div style="display:contents" dir="auto"><p id="3376a32b-3eaf-802a-b7e4-e134e19358f6" class=""><br/>Indexing and slicing let you access or extract specific elements or subarrays from a NumPy array. It’s similar to Python lists, but works for multi-dimensional arrays too.NumPy indexing is faster and supports multi-dimensional access.</p></div><div style="display:contents" dir="auto"><pre id="3376a32b-3eaf-8087-8cfc-e8f0a8a36cac" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">arr = np.array([10, 20, 30, 40, 50, 60])</code></pre></div><div style="display:contents" dir="auto"><ul id="3376a32b-3eaf-802d-bdd4-d5ffdc645cc6" class="bulleted-list"><li style="list-style-type:disc"><strong>1D Array Indexing :</strong></li></ul></div><div style="display:contents" dir="auto"><pre id="3376a32b-3eaf-80e8-95ac-c2d3cfa71998" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr = np.array([10, 20, 30, 40, 50])
+
+# Access a single element (0-based index)
+print(arr[0])  # 10
+print(arr[3])  #40</code></pre></div><div style="display:contents" dir="auto"><ul id="3376a32b-3eaf-8088-afa3-db1bccb9f072" class="bulleted-list"><li style="list-style-type:disc">1D Array Slicing:</li></ul></div><div style="display:contents" dir="auto"><pre id="33a6a32b-3eaf-8084-8cf3-cd77839250be" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all"># Slice: arr[start:stop:step]
+print(arr[1:4])   # [20 30 40]  (from index 1 to 3)
+print(arr[:3])    # [10 20 30]  (start to index 2)
+print(arr[2:])    # [30 40 50]  (index 2 to end)
+print(arr[::2])   # [10 30 50]  (every 2nd element)</code></pre></div><div style="display:contents" dir="auto"><ul id="33a6a32b-3eaf-8006-b295-eeae15a2e5ff" class="bulleted-list"><li style="list-style-type:disc">2D Array Indexing :</li></ul></div><div style="display:contents" dir="auto"><pre id="33a6a32b-3eaf-809b-a9b9-f4f3e7319046" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">arr2d = np.array([[1, 2, 3],
+                  [4, 5, 6],
+                  [7, 8, 9]])
+
+# Access single element: arr2d[row, column]
+print(arr2d[0, 1])  # 2
+print(arr2d[2, 2])  # 9</code></pre></div><div style="display:contents" dir="auto"><ul id="33a6a32b-3eaf-807c-b442-d45d67d54481" class="bulleted-list"><li style="list-style-type:disc">2D Array Slicing:</li></ul></div><div style="display:contents" dir="auto"><pre id="33a6a32b-3eaf-8052-84da-c51cddb90149" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all"># Slice rows
+print(arr2d[0:2, :])  # first 2 rows
+# [[1 2 3]
+#  [4 5 6]]
+
+# Slice columns
+print(arr2d[:, 1:3])  # last 2 columns
+# [[2 3]
+#  [5 6]
+#  [8 9]]
+
+# Slice subarray
+print(arr2d[1:3, 0:2])  
+# [[4 5]
+#  [7 8]]</code></pre></div><div style="display:contents" dir="auto"><p id="33a6a32b-3eaf-8022-8aa0-cf78c257ada0" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="33a6a32b-3eaf-803b-a350-f98f7f327914" class="bulleted-list"><li style="list-style-type:disc">Boolean Indexing (Conditional)</li></ul></div><div style="display:contents" dir="auto"><pre id="33a6a32b-3eaf-80d2-bda4-cba8a38ab79d" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all"># Select elements based on condition
+print(arr[arr &gt; 30])  # [40 50]</code></pre></div><div style="display:contents" dir="auto"><ul id="33a6a32b-3eaf-800e-970b-cf0c80d849e0" class="bulleted-list"><li style="list-style-type:disc">Multidimensional Slicing :</li></ul></div><div style="display:contents" dir="auto"><pre id="33a6a32b-3eaf-80f2-812a-e477a774e9b8" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+matrix = np.array([[1, 2, 3, 4],
+                   [4, 5, 6, 7],
+                   [7, 8, 9, 10]])
+                   </code></pre></div><div style="display:contents" dir="auto"><ul id="33a6a32b-3eaf-8051-992e-da0a3546e7c6" class="bulleted-list"><li style="list-style-type:disc">Modifying values:</li></ul></div><div style="display:contents" dir="auto"><p id="33a6a32b-3eaf-807c-b55c-eeab2baeb750" class="">You can <strong>change values directly</strong></p></div><div style="display:contents" dir="auto"><pre id="33a6a32b-3eaf-8040-83af-e3700dbe8b74" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">arr = np.array([10, 20, 30])
+
+arr[1] = 100
+print(arr)   # [10 100 30]</code></pre></div><div style="display:contents" dir="auto"><p id="33a6a32b-3eaf-80ba-8c29-c8eb6a20bcf9" class="">Also  works with slicing:</p></div><div style="display:contents" dir="auto"><pre id="33a6a32b-3eaf-8018-9a1a-f2b66061e06c" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">arr[0:2] = 0
+print(arr)   # [0 0 30]</code></pre></div><div style="display:contents" dir="auto"><ul id="33a6a32b-3eaf-80b8-bea1-f7a7e255d444" class="bulleted-list"><li style="list-style-type:disc"><strong>Advanced indexing:</strong><div style="display:contents" dir="auto"><ul id="33a6a32b-3eaf-80ce-8b0c-df05301cdb58" class="bulleted-list"><li style="list-style-type:circle"><code><strong>np.take() :</strong></code><strong> </strong></li></ul></div><div style="display:contents" dir="auto"><p id="33a6a32b-3eaf-80f3-a558-eedc8ffb1e48" class="">Another way to select elements using indices.</p></div><div style="display:contents" dir="auto"><pre id="33a6a32b-3eaf-80d4-a4ec-e254a11e537f" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">arr = np.array([10, 20, 30, 40])
+
+print(np.take(arr, [1, 3]))   # [20 40]</code></pre></div><div style="display:contents" dir="auto"><ul id="33a6a32b-3eaf-806a-8be2-e1a8cd35fde6" class="bulleted-list"><li style="list-style-type:circle">Indexing with Multiple Arrays (2D specific):</li></ul></div><div style="display:contents" dir="auto"><pre id="33a6a32b-3eaf-80cf-81cb-fc8f2bf68d93" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">arr2d = np.array([[1, 2],
+                  [3, 4]])
+
+print(arr2d[[0, 1], [1, 0]])   # [2 3]</code></pre></div></li></ul></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">7. Broadcasting</summary><div class="indented"><div style="display:contents" dir="auto"><p id="33a6a32b-3eaf-801d-a189-e743c298ca8f" class=""><strong>Broadcasting</strong> is a feature in NumPy that allows arrays of <strong>different shapes</strong> to be used together in arithmetic operations, So literally NumPy <strong>automatically expands</strong> the smaller array to match the shape of the larger one.Broadcasting avoids copying data, making operations memory-efficient.</p></div><div style="display:contents" dir="auto"><p id="33a6a32b-3eaf-8006-a84a-d5b5089713a8" class=""><span style="border-bottom:0.05em solid">Rules of Broadcasting :</span></p></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-80af-bf90-f33d66f1d93a" class="">NumPy compares shapes element by element from the trailing (right-most) dimension:</p></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80a6-810a-ebf43e7b2703" class="bulleted-list"><li style="list-style-type:disc">If the dimensions are equal, they are compatible.</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-804b-9f90-fc767291f7f7" class="bulleted-list"><li style="list-style-type:disc">If one dimension is 1 ,it is stretched to match the other.</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-8007-817f-fc4201c81ee8" class="bulleted-list"><li style="list-style-type:disc">if dimensions differ and neither is 1,broadcasting fails.</li></ul></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-808f-a409-f53ad4fa75d4" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="33f6a32b-3eaf-80f7-8390-da9a71a640f8" class="">Simple Scalar Broadcasting</h3></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-803f-a56b-ced0bd1d7058" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">arr=np.array([1,2,3,4])
+arr + 10                #[11,12,13,14]  &lt;------ 10 is broadcast across all elements 
+arr * 2                 #[2,4,6,8]
+arr **2                 #[1,4,9,16]</code></pre></div><div style="display:contents" dir="auto"><h3 id="33a6a32b-3eaf-80d0-98f5-eede71edcd3c" class=""><br/><br/>1D + Scalar  Broadcasting</h3></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-80a2-8391-c501a6d57efc" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">a=np.array([1,2,3])
+b=5
+print(a + b)        #[6,7,8]
+
+#shape breakdown:
+#a   -&gt;(3,)
+#b ---&gt;()     &lt;----- Scalar Stretched to (3,)</code></pre></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-800b-8e42-ec28a40ab01a" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="33f6a32b-3eaf-80a9-bd8b-cc3f785226c1" class="">2D Array + 1D  Array</h3></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-80ec-960e-ec420c6f9ca0" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">matrix =np.array([[1,2,3],[4,5,6]])
+row =np.array ([10,20,30])
+
+matrix + row 
+#[[11,22,33],[14,25,36]]
+
+
+#Shape breakdown:
+#matrix -----&gt; (2,3)
+#row  ------&gt; (3,)    &lt;------broadcast along axis 0</code></pre></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-80cd-90bc-c19a9823fa22" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="33f6a32b-3eaf-801c-9441-ee8cbc467f34" class="">Column Vector Broadcasting</h3></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-806b-bcaa-d68e73c1cc38" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">matrix =np.array([[1,2,3],[4,5,6]])
+col =np.array ([[10],[20]])
+
+matrix + col 
+#[[11,12,13],[24,25,26]]
+
+#Shape breakdown
+#matrix -&gt;(2,3)
+#col -&gt; (2,1)   &lt;-----broadcasting along axis 1</code></pre></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8006-a462-d5b6655bf411" class="">
+</p></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8006-a04d-efca31a75246" class="">Broadcasting Failure Example</p></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-80f9-ae49-e7e3c55fbe39" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">a=np.array([[1,2,3]])   #shape (1,3)
+b=np.array([[1,2]])     # shape (1,2)
+
+a + b # ValueError:Operands could not be broadcast 
+      #3 and 2 are incompatible (neither is 1)</code></pre></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">8. Universal Functions(uFuncs)</summary><div class="indented"><div style="display:contents" dir="auto"><p id="0fc8720a-9448-4ead-9e58-b093af26d96f" class=""><strong>Universal Functions (ufuncs)</strong> are NumPy functions that operate element-wise on arrays without explicit loops. They are implemented in optimized C code, so they are very fast.</p></div><div style="display:contents" dir="auto"><h3 id="b8beff68-3169-456a-a4a9-9c2488e59d14" class="">Math ufuncs</h3></div><div style="display:contents" dir="auto"><pre id="e3465a22-1c85-4ab9-8a1f-cd66c2c8e640" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr = np.array([1, 4, 9, 16])
+
+print(np.sqrt(arr))            # [1. 2. 3. 4.]
+print(np.exp(arr))             # [2.718... 54.598... 8103.083... 8886110.52...]
+print(np.log(arr))             # natural log:  [0.         1.38629436 2.19722458 2.77258872]
+print(np.log10(arr))           # base-10 log:  [0.         0.60205999 0.95424251 1.20411998]
+print(np.abs(np.array([-1, -2, 3])))  # [1 2 3]</code></pre></div><div style="display:contents" dir="auto"><p id="b9e3330d-9fa8-4ba6-a3d0-34a380aa710b" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="f0b1215d-d662-4982-8909-91724b67a7e7" class="">Trigonometric ufuncs</h3></div><div style="display:contents" dir="auto"><pre id="93a316cf-f435-47d6-b31c-66428907bf56" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+angles = np.array([0, np.pi / 2, np.pi])
+
+print(np.sin(angles))  # [0. 1. 0.] (approx)
+print(np.cos(angles))  # [ 1.  0. -1.]
+print(np.tan(angles))  # [0. large 0.]</code></pre></div><div style="display:contents" dir="auto"><p id="d7aa843d-3206-496c-a3ce-a7b9864e0370" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="94e1362a-41df-43d7-bd1f-b31379dc4b0f" class="">Rounding</h3></div><div style="display:contents" dir="auto"><pre id="2f8024ed-6ef7-43ec-9adb-ec257ae4b38a" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr = np.array([1.2, 2.7, 3.5, -1.8])
+
+print(np.floor(arr))  # [ 1.  2.  3. -2.]  (always rounds down)
+print(np.ceil(arr))   # [ 2.  3.  4. -1.]  (always rounds up)
+print(np.round(arr))  # [ 1.  3.  4. -2.]  (rounds to nearest)</code></pre></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8001-87b1-c5cf44fedb71" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="94c532f1-de9a-4fca-a2a6-a8263b0477d8" class="">Comparison ufuncs</h3></div><div style="display:contents" dir="auto"><pre id="cdd0b778-8141-44b8-972a-e2008759f52c" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+a = np.array([1, 5, 3])
+b = np.array([2, 4, 3])
+
+print(np.maximum(a, b))  # [2 5 3]  (element-wise max)
+print(np.minimum(a, b))  # [1 4 3]  (element-wise min)</code></pre></div><div style="display:contents" dir="auto"><h3 id="bbe24d1d-8b9c-483f-801c-45fe390ba1ce" class="">Methods of ufuncs</h3></div><div style="display:contents" dir="auto"><p id="14c28c80-df4a-4825-87dc-d36b48575e05" class=""><strong>Key features</strong><div class="indented"><div style="display:contents" dir="auto"><ul id="a13415c8-babd-47c1-bb7e-73ceb521b558" class="bulleted-list"><li style="list-style-type:disc"><strong>Element-wise operations</strong></li></ul></div><div style="display:contents" dir="auto"><ul id="c20ebfd7-b2b8-4f00-aeac-5fabb1799ac2" class="bulleted-list"><li style="list-style-type:disc"><strong>Broadcasting support</strong></li></ul></div><div style="display:contents" dir="auto"><ul id="edf4bd04-c73e-495a-bfe8-2b908a80f3a7" class="bulleted-list"><li style="list-style-type:disc"><strong>Type casting</strong></li></ul></div><div style="display:contents" dir="auto"><ul id="67e6ca23-d6e5-4708-a113-41faec0527b4" class="bulleted-list"><li style="list-style-type:disc"><strong>Reduce operations</strong><div style="display:contents" dir="auto"><ul id="fabb7eec-73d4-4210-8aa2-8deb0e548cde" class="bulleted-list"><li style="list-style-type:circle">Example:</li></ul></div><div style="display:contents" dir="auto"><pre id="4f612f90-9b6b-4ee8-b365-16c9cba79f0f" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">np.add.reduce(arr)   # sums all elements</code></pre></div></li></ul></div><div style="display:contents" dir="auto"><p id="bb445e87-2448-484e-b3bb-735f41a17d69" class=""><strong>Methods</strong></p></div><div style="display:contents" dir="auto"><ul id="3c35d5e4-3f3b-4771-894f-04b0c58d0bc7" class="bulleted-list"><li style="list-style-type:disc"><code>reduce()</code> → reduces an array to a single value</li></ul></div><div style="display:contents" dir="auto"><ul id="4ccaeceb-1e21-4d3f-a470-71e95ae76391" class="bulleted-list"><li style="list-style-type:disc"><code>accumulate()</code> → cumulative results</li></ul></div><div style="display:contents" dir="auto"><ul id="a45511b9-e750-4a97-8301-b280b41fcded" class="bulleted-list"><li style="list-style-type:disc"><code>outer()</code> → pairwise operations</li></ul></div><div style="display:contents" dir="auto"><ul id="f0721cfe-2d51-499d-8aec-6189455c7631" class="bulleted-list"><li style="list-style-type:disc"><code>at()</code> → in-place operations<div style="display:contents" dir="auto"><ul id="d28bd91e-829f-4b1f-8ceb-f440c95f5369" class="bulleted-list"><li style="list-style-type:circle">Example:</li></ul></div><div style="display:contents" dir="auto"><pre id="dbcabf22-933e-49ea-89f9-398460867008" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">np.add.accumulate(arr)  # cumulative sum</code></pre></div></li></ul></div><div style="display:contents" dir="auto"><h3 id="d2c3cdc9-1d5e-4f51-a23f-13f03edd3fc5" class="">Example</h3></div><div style="display:contents" dir="auto"><pre id="b7a8367d-5cf2-4052-8e53-7ff0cb33973a" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr1 = np.array([1, 2, 3])
+arr2 = np.array([4, 5, 6])
+
+result = np.add(arr1, arr2)
+print(result)  # [5 7 9]</code></pre></div><div style="display:contents" dir="auto"><h3 id="237ea499-a749-48de-9ea8-d66c099a1107" class="">Key takeaway:</h3></div><div style="display:contents" dir="auto"><p id="8c070907-2eca-4698-ae78-48774d96fab9" class="">Ufuncs are <strong>fast, vectorized operations on arrays</strong> that work <strong>without loops</strong>.</p></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8077-8a4a-e18bd4a6b19d" class="">
+</p></div></div></p></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">9. Sorting and Searching</summary><div class="indented"><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.5em;line-height:1.3;margin:0">Sorting</summary><div class="indented"><div style="display:contents" dir="auto"><p id="534ddcac-5326-46ca-838e-9e348e7cf8c2" class="">Sorting means arranging values in ascending (default) or descending order.</p></div><div style="display:contents" dir="auto"><ul id="d8a89f9f-fbb1-47d6-b22e-0d704d4f2562" class="bulleted-list"><li style="list-style-type:disc"><code><strong>np.sort()</strong></code> returns a <strong>new sorted copy</strong> and leaves the original array unchanged.</li></ul></div><div style="display:contents" dir="auto"><ul id="9901b7b5-5232-4148-a66e-2ba750436b24" class="bulleted-list"><li style="list-style-type:disc"><code><strong>.sort()</strong></code> sorts the <strong>original array in-place</strong> and returns <code>None</code>, modifies the original array and does not return a new array.</li></ul></div><div style="display:contents" dir="auto"><pre id="69d46bdc-e235-4471-909f-4eaa4b16ce3d" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr = np.array([3, 1, 4, 1, 5, 9, 2, 6])
+
+sorted_arr = np.sort(arr)
+print(sorted_arr)  # [1 1 2 3 4 5 6 9]
+print(arr)         # [3 1 4 1 5 9 2 6]  (unchanged)
+
+arr.sort()
+print(arr)         # [1 1 2 3 4 5 6 9]  (changed)</code></pre></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">Descending sort</summary></details></div><div style="display:contents" dir="auto"><p id="cf99f04e-9f51-4160-a4b3-01e452a4578b" class="">A common pattern is to sort ascending, then reverse the result:</p></div><div style="display:contents" dir="auto"><pre id="e07754fa-c853-4f2f-8b58-5d672651be7b" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr = np.array([3, 1, 4, 1, 5])
+
+# Descending order
+
+desc = np.sort(arr)[::-1]
+print(desc)  # [5 4 3 1 1]</code></pre></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">Sorting 2D arrays (axis)</summary><div class="indented"><div style="display:contents" dir="auto"><p id="054d4e73-6c7d-4dc2-bfed-0d29075672fa" class="">In 2D arrays, <code>axis</code> tells NumPy the direction to sort:</p></div><div style="display:contents" dir="auto"><ul id="e64f7ec4-514b-4511-b0da-f789ec6e9cd6" class="bulleted-list"><li style="list-style-type:disc"><code>axis=0</code> → sort <strong>each column (top to bottom)</strong></li></ul></div><div style="display:contents" dir="auto"><ul id="10d663c3-21e3-4e31-91d6-89fa665d43ec" class="bulleted-list"><li style="list-style-type:disc"><code>axis=1</code> → sort <strong>each row (left to right)</strong></li></ul></div><div style="display:contents" dir="auto"><pre id="9dcf5a9a-0e4e-4255-a26d-d58b82ff3a1a" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+mat = np.array([[3, 1],
+                [2, 4]])
+
+print(np.sort(mat, axis=0))
+# [[2 1]
+#  [3 4]]
+
+print(np.sort(mat, axis=1))
+# [[1 3]
+#  [2 4]]</code></pre></div></div></details></div></div></details></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-80b9-84b6-e517ea72edc8" class="">
+</p></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.5em;line-height:1.3;margin:0"><code>argsort</code> (indices that would sort)</summary><div class="indented"><div style="display:contents" dir="auto"><p id="56366ed1-cfbd-4845-bf24-3fa52b36b210" class=""><code>np.argsort()</code> returns the indices that would sort the array, which can be used to reorder the array.</p></div><div style="display:contents" dir="auto"><pre id="036fe3cf-1c90-4a8b-8b8b-caf19758c491" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr = np.array([30, 10, 20])
+
+idx = np.argsort(arr)
+print(idx)         # [1 2 0]
+print(arr[idx])    # [10 20 30]  (use indices to get sorted values)</code></pre></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">Powerful use-case: sort one array using another</summary></details></div><div style="display:contents" dir="auto"><pre id="a9c64d3b-752c-4aa1-82ba-8eace7eb72bf" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+names = np.array([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;])
+scores = np.array([70, 50, 90])
+
+idx = np.argsort(scores)
+print(names[idx])   # [&#x27;B&#x27; &#x27;A&#x27; &#x27;C&#x27;]</code></pre></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.5em;line-height:1.3;margin:0">Searching</summary><div class="indented"><div style="display:contents" dir="auto"><p id="3e8385cb-7586-4f8a-b861-a03b9b03fa8a" class="">Searching means finding where certain values are located (by index).</p></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><code>np.where</code> (find indices or choose values)</summary></details></div><div style="display:contents" dir="auto"><p id="e5e11713-d9e4-432e-b134-98d16cb46a6e" class=""><code>np.where</code> can be used for both <strong>filtering</strong> and <strong>conditional replacement</strong>.</p></div><div style="display:contents" dir="auto"><ul id="c50c324b-17d4-488e-aa9b-da5ac150c37a" class="bulleted-list"><li style="list-style-type:disc"><code>np.where(condition)</code> returns the indices where the condition is <code>True</code>.</li></ul></div><div style="display:contents" dir="auto"><ul id="791bfdb5-88c9-470b-abda-99a0dab5237f" class="bulleted-list"><li style="list-style-type:disc"><code>np.where(condition, x, y)</code> returns an array where each element is <code>x</code> if True, otherwise <code>y</code>.</li></ul></div><div style="display:contents" dir="auto"><pre id="158d401d-fb57-4c42-9a41-7aceb4f088eb" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr = np.array([10, 20, 30, 40, 50])
+
+print(np.where(arr &gt; 25))
+# (array([2, 3, 4]),)
+
+print(np.where(arr &gt; 25, arr, 0))
+# [ 0  0 30 40 50]</code></pre></div><div style="display:contents" dir="auto"><h4 id="521383ba-baf0-44ed-b1fc-fd23ec91e93a" class="">Real-life example: replace negative values with 0</h4></div><div style="display:contents" dir="auto"><pre id="8892ba15-1c39-43b7-8c9a-a3391961b451" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr = np.array([-1, 2, -3, 4])
+print(np.where(arr &lt; 0, 0, arr))  # [0 2 0 4]</code></pre></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><code>argmin</code> and <code>argmax</code> (index of min or max)</summary></details></div><div style="display:contents" dir="auto"><ul id="28c6adbb-d53b-4f26-8eed-58bb0196da89" class="bulleted-list"><li style="list-style-type:disc"><code>np.argmin(arr)</code> returns the <strong>index</strong> of the smallest value.</li></ul></div><div style="display:contents" dir="auto"><ul id="d4f47918-19bd-4189-bd13-008d3bd2b41b" class="bulleted-list"><li style="list-style-type:disc"><code>np.argmax(arr)</code> returns the <strong>index</strong> of the largest value.</li></ul></div><div style="display:contents" dir="auto"><pre id="0dffde1c-3d34-43aa-8544-ce1ec467cf96" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr = np.array([10, 20, 30, 40, 50])
+
+print(np.argmin(arr))  # 0  (10 is smallest)
+print(np.argmax(arr))  # 4  (50 is largest)</code></pre></div><div style="display:contents" dir="auto"><h4 id="5b665e82-3f09-4682-ab27-d65a5b9c41ef" class="">Important 2D behavior (flattened index vs axis)</h4></div><div style="display:contents" dir="auto"><pre id="b2211d95-da66-4f23-8fb1-cdff14221ad4" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+mat = np.array([[1, 5],
+                [3, 2]])
+
+print(np.argmax(mat))          # 1 (flattened)
+print(np.argmax(mat, axis=0))  # [1 0] (per column)
+print(np.argmax(mat, axis=1))  # [1 0] (per row)</code></pre></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><code>np.searchsorted</code> (optional but strong)</summary></details></div><div style="display:contents" dir="auto"><p id="246bc22d-4426-4e07-817a-65f4618471f1" class="">Finds the index where a value should be inserted to maintain sorted order.</p></div><div style="display:contents" dir="auto"><pre id="5b3531f5-6187-4de7-8309-c360e14503e8" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+arr = np.array([10, 20, 30, 40])
+print(np.searchsorted(arr, 25))  # 2</code></pre></div></div></details></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8055-86c6-f7de1a5e2158" class="">
+</p></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">10. Stacking and Splitting Arrays</summary><div class="indented"><div style="display:contents" dir="auto"><p id="9ee3aea7-06d8-4c63-a5fa-ae83bbc83c33" class=""><strong>Stacking</strong> combines arrays into one larger array.</p></div><div style="display:contents" dir="auto"><p id="f63c1e78-4127-4d1f-81eb-12b2823f7fde" class=""><strong>Splitting</strong> divides an array into smaller arrays.</p></div><div style="display:contents" dir="ltr"><figure class="block-color-yellow_background callout" style="white-space:pre-wrap;display:flex" id="bcec8ffd-fb6f-454d-8fc5-454a25037a9d"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="12a542cf-2c46-458a-a370-bfb7ea42f7d7" class=""><strong>Key rule:</strong> arrays must have <strong>compatible shapes</strong> for stacking.</p></div></div></figure></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.5em;line-height:1.3;margin:0">Stacking (combining arrays)</summary><div class="indented"><div style="display:contents" dir="auto"><pre id="19429d88-74a3-400b-867d-340d379d2a96" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+# 1D examples
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+
+np.hstack([a, b])         # [1 2 3 4 5 6]
+np.vstack([a, b])         # [[1 2 3],
+                          #  [4 5 6]]
+np.concatenate([a, b])    # [1 2 3 4 5 6]</code></pre></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">What is the difference?</summary><div class="indented"><div style="display:contents" dir="auto"><ul id="4624fd04-bd76-420d-a726-212eddb9c135" class="bulleted-list"><li style="list-style-type:disc"><code>np.hstack()</code> joins arrays <strong>along columns</strong> (axis=1 for 2D)</li></ul></div><div style="display:contents" dir="auto"><ul id="54f9743a-5fe6-4aef-a7f1-afd19c2939bf" class="bulleted-list"><li style="list-style-type:disc"><code>np.vstack()</code> joins arrays <strong>along rows</strong> (axis=0)</li></ul></div><div style="display:contents" dir="auto"><ul id="06273baf-56e0-456f-8551-4aca52ef58f9" class="bulleted-list"><li style="list-style-type:disc"><code>np.concatenate()</code> is the general function where you choose the <code>axis</code></li></ul></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">Stacking 2D arrays + using <code>axis</code></summary><div class="indented"><div style="display:contents" dir="auto"><pre id="51409a25-f3fe-4b16-95f8-dd863182866a" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">m1 = np.array([[1, 2],
+               [3, 4]])
+
+m2 = np.array([[5, 6],
+               [7, 8]])
+
+np.hstack([m1, m2])                 # [[1 2 5 6],
+                                    #  [3 4 7 8]]
+
+np.vstack([m1, m2])                 # [[1 2],
+                                    #  [3 4],
+                                    #  [5 6],
+                                    #  [7 8]]
+
+np.concatenate([m1, m2], axis=0)    # same as vstack
+np.concatenate([m1, m2], axis=1)    # same as hstack</code></pre></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><code>np.stack()</code> (adds a new dimension)</summary><div class="indented"><div style="display:contents" dir="auto"><p id="164ab4ca-b609-4b74-8ae4-5f5ea2b64c59" class=""><code>np.stack()</code> is different from <code>hstack</code> and <code>vstack</code> because it creates a <strong>new axis</strong>.</p></div><div style="display:contents" dir="auto"><pre id="11f34756-622e-48e3-87d7-219838aa7525" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">np.stack([a, b], axis=0)   # [[1 2 3],
+                           #  [4 5 6]]
+
+np.stack([a, b], axis=1)   # [[1 4],
+                           #  [2 5],
+                           #  [3 6]]</code></pre></div></div></details></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.5em;line-height:1.3;margin:0">Splitting (dividing arrays)</summary><div class="indented"><div style="display:contents" dir="auto"><pre id="9f14c781-0f55-4a8b-9f3e-5bcc27af9893" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all"># 1D array
+arr = np.array([1, 2, 3, 4, 5, 6])
+
+np.split(arr, 3)          # [array([1, 2]), array([3, 4]), array([5, 6])]
+np.split(arr, [2, 4])     # split at indices 2 and 4
+                          # -&gt; [array([1, 2]), array([3, 4]), array([5, 6])]</code></pre></div><div style="display:contents" dir="ltr"><figure class="block-color-red_background callout" style="white-space:pre-wrap;display:flex" id="ece64722-ae28-49c5-891b-0634920490de"><div style="font-size:1.5em"><span class="icon">⚠️</span></div><div style="width:100%"><div style="display:contents" dir="auto"><p id="d2207157-d2a7-42f7-9f40-5bb9f4d7b243" class=""><strong>Equal splits must divide evenly</strong>, otherwise you get an error.</p></div><div style="display:contents" dir="auto"><pre id="3bb8c177-c140-4330-8283-e90954347b1e" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all"># arr has 5 elements, so it cannot be split evenly into 3 parts
+# np.split(np.array([1, 2, 3, 4, 5]), 3)  # ValueError</code></pre></div></div></figure></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">2D splitting: <code>hsplit</code> and <code>vsplit</code></summary><div class="indented"><div style="display:contents" dir="auto"><ul id="5bb957a6-7568-4f7c-ad35-ede58872be99" class="bulleted-list"><li style="list-style-type:disc"><code>np.hsplit()</code> splits <strong>columns</strong></li></ul></div><div style="display:contents" dir="auto"><ul id="950f6454-f6db-4092-8d0c-8a5a307871c4" class="bulleted-list"><li style="list-style-type:disc"><code>np.vsplit()</code> splits <strong>rows</strong></li></ul></div><div style="display:contents" dir="auto"><pre id="efa4f670-1b06-4410-a376-31b5fe7043de" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">mat = np.array([[1, 2, 3, 4],
+                [5, 6, 7, 8]])
+
+print(mat.shape)  # (2, 4)
+
+np.hsplit(mat, 2)  # two arrays of shape (2, 2)  [array([[1, 2], [5, 6]]),array([[3, 4],[7, 8]])]
+        
+       
+np.vsplit(mat, 2)  # two arrays of shape (1, 4)  [ array([[1, 2, 3, 4]]),array([[5, 6, 7, 8]])]
+
+
+ 
+</code></pre></div></div></details></div></div></details></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">11. Numpy Random Module</summary><div class="indented"><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-80ea-8018-c7ca1f94c995" class=""><br/>The <code>numpy.random</code> module is used to generate random numbers, arrays, and samples from probability distributions.</p></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80e4-ac57-fc9cc4bb190b" class="bulleted-list"><li style="list-style-type:disc"><strong>Setting a Seed: </strong>To ensure your results are the same every time your code runs, use a random seed.</li></ul></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-8051-83de-c4fedb2362c0" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+rng = np.random.default_rng(42)   # recommended modern approach</code></pre></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8047-b724-f3f7a6dd218c" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-8091-892b-f32e52862f4f" class="bulleted-list"><li style="list-style-type:disc"><strong>Common Random Functions:</strong><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-802f-b9f2-c21a5178eb71" class="bulleted-list"><li style="list-style-type:circle">Uniform Distribution (0 to 1):</li></ul></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-8015-99f7-d372bd59ce05" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">rng.random(3)        # 1D array
+rng.random((2, 3))   # 2×3 matrix</code></pre></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-8050-a6bd-d701896ad151" class="bulleted-list"><li style="list-style-type:circle">Standard Normal Distribution:</li></ul></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-8031-aeb0-c550fe86ebe0" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">rng.standard_normal(4)</code></pre></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-800a-ba3b-ec95545a7a57" class="bulleted-list"><li style="list-style-type:circle">Random Integers:</li></ul></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-8016-8026-d4d089342ac0" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">rng.integers(1, 10, 5)</code></pre></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80c8-927d-c5c578e6d705" class="bulleted-list"><li style="list-style-type:circle">Random Selection:</li></ul></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-80f2-ba44-f9b472216947" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">rng.choice([10, 20, 30, 40], size=3)</code></pre></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80a0-bab1-c7ffd2e01114" class="bulleted-list"><li style="list-style-type:circle">Shuffling Arrays:</li></ul></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-8083-bcfe-e6de07b2d083" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">arr = np.array([1, 2, 3, 4, 5])
+
+rng.shuffle(arr)      # modifies original array
+print(arr)</code></pre></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8003-9a4b-d04192536502" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80ac-bb20-c7b24fcde270" class="bulleted-list"><li style="list-style-type:circle">Shuffle vs Permutation</li></ul></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-8030-9891-f2c76404106e" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">rng.permutation(arr)  # returns a new shuffled array</code></pre></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8004-ae7b-dfb388223dfc" class="">
+</p></div></li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80e1-9421-f2987d50c373" class="bulleted-list"><li style="list-style-type:disc">Probability Distributions:<div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80bf-b6cf-f0bae1e54200" class="bulleted-list"><li style="list-style-type:circle">Normal Distribution:</li></ul></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-8044-babc-f8f91fcb9383" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">rng.normal(loc=0, scale=1, size=5)</code></pre></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80bb-a258-d7977848390a" class="bulleted-list"><li style="list-style-type:circle">Uniform Distribution:</li></ul></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-8075-8349-efa9abbe496e" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">rng.uniform(low=0, high=10, size=5)</code></pre></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8027-80a7-ec98371ae9f7" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-8041-b8b9-c608d876ed1f" class="bulleted-list"><li style="list-style-type:circle">Binomial Distribution</li></ul></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-8091-861a-ed110843ae6a" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">rng.binomial(n=10, p=0.5, size=5)</code></pre></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-808d-b6df-f634bc5cf9ec" class="">
+</p></div></li></ul></div><div style="display:contents" dir="ltr"><table id="33f6a32b-3eaf-8026-96dc-fa8263a154e1" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8085-883d-d54d8a161448"><th id="AC_Y" class="simple-table-header-color simple-table-header">Old way </th><th id="erMf" class="simple-table-header-color simple-table-header">New way</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8029-8be7-dac3b6f9fc5a"><td id="AC_Y" class=""><code>np.random.rand()</code></td><td id="erMf" class=""><code>rng.random()</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8033-b42d-c27b7fee2895"><td id="AC_Y" class=""><code>np.random.randn()</code></td><td id="erMf" class=""><code>rng.standard_normal()</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8009-9090-fe5354a30521"><td id="AC_Y" class=""><code>np.random.randint()</code></td><td id="erMf" class=""><code>rng.integers()</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80bd-85f1-ed11c6179155"><td id="AC_Y" class=""><code>np.random.choice()</code></td><td id="erMf" class=""><code>rng.choice()</code></td></tr></div></tbody></table></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">12. Linear Algebra with Numpy</summary><div class="indented"><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8055-80b8-daa71cc82512" class=""><br/>NumPy provides a powerful linear algebra module, <code>np.linalg</code>, used for matrix operations in machine learning, data science, and engineering.</p></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80a5-97a1-cf2120dd17bc" class="bulleted-list"><li style="list-style-type:disc"><strong>Matrix Multiplication:</strong></li></ul></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-80f9-8b3b-d8ab4aaa7829" class="">Matrix multiplication combines two arrays based on linear algebra rules (not element-wise).</p></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-80ba-bc80-dc2dbd389ac5" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">import numpy as np
+
+A = np.array([[1, 2],
+              [3, 4]])
+
+B = np.array([[5, 6],
+              [7, 8]])
+
+np.dot(A, B)
+# [[19 22]
+#  [43 50]]
+
+A @ B   # preferred modern syntax</code></pre></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-803d-9664-c40cbc245e3b" class="bulleted-list"><li style="list-style-type:disc"><strong>Transpose</strong><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-8058-b6c2-cb67f9daec46" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">np.linalg.inv(A)
+# [[-2.   1. ]
+#  [ 1.5 -0.5]]</code></pre></div></li></ul></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8074-8596-dafbc7307e69" class="">The transpose flips rows into columns.</p></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-80ea-a342-ecb761ce972f" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">A = np.array([[1, 2, 3],
+              [4, 5, 6]])
+
+A.T
+# [[1 4]
+#  [2 5]
+#  [3 6]]</code></pre></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8025-a3eb-facc2206710a" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-8062-9aa4-e69491fd1e4a" class="bulleted-list"><li style="list-style-type:disc"><strong>Determinant and Inverse</strong><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-80ed-a94e-c9d102a63232" class="">Determinant</p></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-801d-bbb1-e9b0a7fd9bad" class="">The determinant is a scalar value that describes properties of a matrix (e.g., invertibility).</p></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-800b-ad1c-f2b3728abf9e" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">A = np.array([[1, 2],
+              [3, 4]])
+
+np.linalg.det(A)   # -2.0</code></pre></div></li></ul></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-800c-be56-f10d363ba6de" class=""><div class="indented"><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-808e-a0f9-d6feb3375a31" class="">Inverse</p></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-80e8-8504-dd96994a28fb" class="">The inverse of a matrix is used to solve linear equations.</p></div></div></p></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-808f-a1ed-cc1d128f5845" class="bulleted-list"><li style="list-style-type:disc"><strong>Eigenvalues and Eigenvectors</strong><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-80ef-a02b-d14a9d547a02" class="">Eigenvalues and eigenvectors describe how a matrix transforms space.</p></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-80be-b620-cb316fb1bc73" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">A = np.array([[4, 2],
+              [1, 3]])
+
+eigenvalues, eigenvectors = np.linalg.eig(A)
+
+print(eigenvalues)    # [5. 2.]
+print(eigenvectors)   # columns are eigenvectors</code></pre></div></li></ul></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8089-a12b-ebd8e61a2b0a" class=""><br/><strong>Solving a Linear System</strong><div class="indented"><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8053-991d-d20d13e35d0c" class="">Solve the equation: Ax=b</p></div><div style="display:contents" dir="auto"><pre id="33f6a32b-3eaf-8063-a7c8-e395801523c7" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all"># Solving a system of equations:
+# 2x + y = 8
+# x + 3y = 13
+
+A = np.array([[2, 1],
+              [1, 3]])
+
+b = np.array([8, 13])
+
+np.linalg.solve(A, b)  # [3. 2.]</code></pre></div></div></p></div><div style="display:contents" dir="auto"><h2 id="33f6a32b-3eaf-80e9-8b1a-ddd7868cb68a" class="">Key Notes</h2></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-8025-a78b-f19b5a46afe1" class="bulleted-list"><li style="list-style-type:disc">Matrix multiplication is <strong>not element-wise</strong> (use  for element-wise)</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-8081-8125-dba6a795aca5" class="bulleted-list"><li style="list-style-type:disc">Use <code>@</code> for matrix multiplication</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80b8-9541-ec7b6916fa67" class="bulleted-list"><li style="list-style-type:disc"><code>np.linalg</code> functions require <strong>compatible shapes</strong></li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80bf-a76b-fe6e9b5af789" class="bulleted-list"><li style="list-style-type:disc">Not all matrices have an inverse (determinant must not be zero)</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-805d-b9b7-f9e87583f3cc" class="bulleted-list"><li style="list-style-type:disc">Prefer <code>np.linalg.solve()</code> over <code>inv(A) @ b</code></li></ul></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8011-bd1d-c9b1c29de48d" class="">
+</p></div></div></details></div><div style="display:contents" dir="auto"><details open=""><summary style="font-weight:600;font-size:1.875em;line-height:1.3;margin:0">13.Quick Cheat Sheet</summary><div class="indented"><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-80fd-9df6-ed9d3198973b" class="">
+</p></div><div style="display:contents" dir="ltr"><table id="33f6a32b-3eaf-802c-80be-deeaf0eda10f" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80eb-9385-cf90df836880"><th id="ULJE" class="simple-table-header-color simple-table-header"><strong>Category</strong></th><th id="~S]M" class="simple-table-header-color simple-table-header"><strong>Task</strong></th><th id="vwEY" class="simple-table-header-color simple-table-header"><strong>Code</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8072-a7da-cf94c9256923"><td id="ULJE" class=""><strong>Setup</strong></td><td id="~S]M" class="">Import NumPy</td><td id="vwEY" class=""><code>import numpy as np</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80f8-92f9-f5778a628fca"><td id="ULJE" class=""><strong>Arrays</strong></td><td id="~S]M" class="">Create 1D array</td><td id="vwEY" class=""><code>np.array([1, 2, 3])</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-805f-9b16-fb79629a15cd"><td id="ULJE" class=""></td><td id="~S]M" class="">Create 2D array</td><td id="vwEY" class=""><code>np.array([[1, 2], [3, 4]])</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80ed-a3a3-ded1aaeadb2b"><td id="ULJE" class=""></td><td id="~S]M" class="">Zeros array</td><td id="vwEY" class=""><code>np.zeros((2, 3))</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8033-8970-c5610bcf4ade"><td id="ULJE" class=""></td><td id="~S]M" class="">Ones array</td><td id="vwEY" class=""><code>np.ones((2, 3))</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8032-aace-eb438d0bb505"><td id="ULJE" class=""></td><td id="~S]M" class="">Range array</td><td id="vwEY" class=""><code>np.arange(0, 10, 2)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8095-a4f6-ffe101e8fe32"><td id="ULJE" class=""></td><td id="~S]M" class="">Evenly spaced</td><td id="vwEY" class=""><code>np.linspace(0, 1, 5)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80f6-912e-dd509ed91355"><td id="ULJE" class=""><strong>Array Info</strong></td><td id="~S]M" class="">Shape</td><td id="vwEY" class=""><code>arr.shape</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8078-9f18-fd72fa46e2f1"><td id="ULJE" class=""></td><td id="~S]M" class="">Size</td><td id="vwEY" class=""><code>arr.size</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8053-ac7d-d9d9cea46eee"><td id="ULJE" class=""></td><td id="~S]M" class="">Dimensions</td><td id="vwEY" class=""><code>arr.ndim</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8007-9c02-c0b10999b4df"><td id="ULJE" class=""></td><td id="~S]M" class="">Data type</td><td id="vwEY" class=""><code>arr.dtype</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8025-a9a0-fb1b7bcb61b8"><td id="ULJE" class=""><strong>Reshaping</strong></td><td id="~S]M" class="">Reshape</td><td id="vwEY" class=""><code>arr.reshape(2, 3)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8084-8988-d649204e3a58"><td id="ULJE" class=""></td><td id="~S]M" class="">Flatten (copy)</td><td id="vwEY" class=""><code>arr.flatten()</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80fb-b1be-fbe618a4821f"><td id="ULJE" class=""></td><td id="~S]M" class="">Flatten (view)</td><td id="vwEY" class=""><code>arr.ravel()</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8087-994a-f69372022c8b"><td id="ULJE" class=""></td><td id="~S]M" class="">Transpose</td><td id="vwEY" class=""><code>arr.T</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8010-ad16-da5098029936"><td id="ULJE" class=""><strong>Math Operations</strong></td><td id="~S]M" class="">Sum / Mean / Std</td><td id="vwEY" class=""><code>np.sum(arr), np.mean(arr), np.std(arr)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80f1-b06f-c159e644c813"><td id="ULJE" class=""></td><td id="~S]M" class="">Min / Max</td><td id="vwEY" class=""><code>np.min(arr), np.max(arr)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-801d-a56a-c806333c32b2"><td id="ULJE" class=""></td><td id="~S]M" class="">Index of Min / Max</td><td id="vwEY" class=""><code>np.argmin(arr), np.argmax(arr)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80d9-8488-ca775f050c93"><td id="ULJE" class=""><strong>Sorting &amp; Filtering</strong></td><td id="~S]M" class="">Sort</td><td id="vwEY" class=""><code>np.sort(arr)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-800f-820a-fcddf95bdba8"><td id="ULJE" class=""></td><td id="~S]M" class="">Argsort (indices)</td><td id="vwEY" class=""><code>np.argsort(arr)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8000-a53d-f0aaea5dc9a3"><td id="ULJE" class=""></td><td id="~S]M" class="">Where condition</td><td id="vwEY" class=""><code>np.where(arr &gt; 5)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-803c-93d7-c252b051a554"><td id="ULJE" class=""></td><td id="~S]M" class="">Boolean filtering</td><td id="vwEY" class=""><code>arr[arr &gt; 5]</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80a3-9803-dbf44c7f1122"><td id="ULJE" class=""><strong>Stacking &amp; Joining</strong></td><td id="~S]M" class="">Vertical stack</td><td id="vwEY" class=""><code>np.vstack([a, b])</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8042-bcc9-d8b59605eb78"><td id="ULJE" class=""></td><td id="~S]M" class="">Horizontal stack</td><td id="vwEY" class=""><code>np.hstack([a, b])</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80a4-9689-e532ab928200"><td id="ULJE" class=""></td><td id="~S]M" class="">Concatenate</td><td id="vwEY" class=""><code>np.concatenate([a, b])</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8001-bac4-ee4eeae277e1"><td id="ULJE" class=""><strong>Type Handling</strong></td><td id="~S]M" class="">Type casting</td><td id="vwEY" class=""><code>arr.astype(np.float32)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80bc-914c-eed84e1c3f89"><td id="ULJE" class=""><strong>Linear Algebra</strong></td><td id="~S]M" class="">Matrix multiply</td><td id="vwEY" class=""><code>A @ B</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80f3-9cd3-d9a249571929"><td id="ULJE" class=""></td><td id="~S]M" class="">Inverse</td><td id="vwEY" class=""><code>np.linalg.inv(A)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8049-971a-cad8531f8fc7"><td id="ULJE" class=""></td><td id="~S]M" class="">Determinant</td><td id="vwEY" class=""><code>np.linalg.det(A)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80ac-8614-de943e78aab5"><td id="ULJE" class=""></td><td id="~S]M" class="">Solve Ax = b</td><td id="vwEY" class=""><code>np.linalg.solve(A, b)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8041-9ae3-df537483821c"><td id="ULJE" class=""><strong>Random (Modern API)</strong></td><td id="~S]M" class="">Create generator</td><td id="vwEY" class=""><code>rng = np.random.default_rng(42)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8000-9aec-efb98b78b0aa"><td id="ULJE" class=""></td><td id="~S]M" class="">Random floats [0,1)</td><td id="vwEY" class=""><code>rng.random(3)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80a4-a9d7-cf106ae10e7a"><td id="ULJE" class=""></td><td id="~S]M" class="">Random integers</td><td id="vwEY" class=""><code>rng.integers(0, 10, 5)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8074-a7ac-f590581c8737"><td id="ULJE" class=""></td><td id="~S]M" class="">Random choice</td><td id="vwEY" class=""><code>rng.choice([1,2,3], size=2)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-80d6-8fa5-f7aaf4eef0e4"><td id="ULJE" class=""></td><td id="~S]M" class="">Shuffle (in-place)</td><td id="vwEY" class=""><code>rng.shuffle(arr)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8043-bb84-ed6d75ddd326"><td id="ULJE" class=""></td><td id="~S]M" class="">Permutation (copy)</td><td id="vwEY" class=""><code>rng.permutation(arr)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8076-9e9e-fcd83dda6e23"><td id="ULJE" class=""><strong>Distributions</strong></td><td id="~S]M" class="">Normal distribution</td><td id="vwEY" class=""><code>rng.normal(0, 1, size=5)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8017-b166-daa1d33f9295"><td id="ULJE" class=""></td><td id="~S]M" class="">Uniform distribution</td><td id="vwEY" class=""><code>rng.uniform(0, 10, size=5)</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="33f6a32b-3eaf-8024-92af-f783fe640361"><td id="ULJE" class=""></td><td id="~S]M" class="">Binomial distribution</td><td id="vwEY" class=""><code>rng.binomial(n=10, p=0.5, size=5)</code></td></tr></div></tbody></table></div></div></details></div><div style="display:contents" dir="auto"><h1 id="33f6a32b-3eaf-801a-bbbb-e0252e8d36b4" class="">Final Notes</h1></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-809e-8830-f8790b49b83a" class="bulleted-list"><li style="list-style-type:disc">Uses <strong>modern NumPy practices</strong> (<code>default_rng</code>)</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80cb-adc2-fd9f4bd55db1" class="bulleted-list"><li style="list-style-type:disc">Covers <strong>core + intermediate + important advanced concepts</strong></li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-807d-87f7-f1cba3e28cfd" class="bulleted-list"><li style="list-style-type:disc">Structured for <strong>quick revision and real use</strong></li></ul></div><div style="display:contents" dir="auto"><h2 id="33f6a32b-3eaf-8068-8c38-cc08e48c1582" class="">Final Verdict</h2></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-807b-a124-de3d4b0c77b5" class="">NumPy is a fundamental library for numerical computing in Python and serves as the backbone for data science, machine learning, and scientific computing workflows.</p></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-80c5-ad78-ecbe2a23802c" class="">Through this guide, I have learned how to:</p></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-8074-832f-ec63ab4c356f" class="bulleted-list"><li style="list-style-type:disc">Create and manipulate arrays efficiently</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80a5-8114-d883ee5b8e6e" class="bulleted-list"><li style="list-style-type:disc">Perform fast vectorized operations without loops</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-801e-8bcb-c2cabd30643f" class="bulleted-list"><li style="list-style-type:disc">Reshape and transform data structures</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80af-abc4-f57cc071f684" class="bulleted-list"><li style="list-style-type:disc">Apply broadcasting for operations across different shapes</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-8068-99d2-e93c97287831" class="bulleted-list"><li style="list-style-type:disc">Use powerful tools like sorting, searching, stacking, and splitting</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80bb-be2f-e36bb35b478e" class="bulleted-list"><li style="list-style-type:disc">Generate random data and work with probability distributions</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-801e-9f48-ea2de9b13525" class="bulleted-list"><li style="list-style-type:disc">Apply linear algebra concepts such as matrix multiplication, inversion, and solving systems of equations</li></ul></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8082-ba99-ed991cfde70a" class="">One key takeaway is that <strong>NumPy is not just about arrays</strong>, but about writing <strong>efficient, scalable, and optimized code</strong> for real-world data problems.</p></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-805e-bed7-fbc38b8ecf11" class="">I also understand the importance of:</p></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80b1-9cce-d474c147bd2f" class="bulleted-list"><li style="list-style-type:disc">Using vectorized operations instead of loops</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-8092-b0b1-dfe6d1d9ba50" class="bulleted-list"><li style="list-style-type:disc">Writing memory-efficient code</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-8059-9ab7-e1d14f33386e" class="bulleted-list"><li style="list-style-type:disc">Leveraging NumPy as a foundation for libraries like Pandas, TensorFlow, and PyTorch</li></ul></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-80d8-b41f-e6156c079a42" class="">Going forward, the next step is to:</p></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80e5-bc16-d4f10b5b39b5" class="bulleted-list"><li style="list-style-type:disc">Apply NumPy in real datasets (Pandas)</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-80db-a58c-e7610d1ced22" class="bulleted-list"><li style="list-style-type:disc">Use it in machine learning workflows</li></ul></div><div style="display:contents" dir="auto"><ul id="33f6a32b-3eaf-8046-b211-f213fcef1328" class="bulleted-list"><li style="list-style-type:disc">Build small projects that reinforce these concepts</li></ul></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-8000-956c-e0464098e6da" class=""><strong>In summary:</strong></p></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-803d-be65-e561c98d5adc" class="">NumPy is an essential tool that transforms Python into a high-performance environment for numerical computation, and mastering it is a critical step toward becoming a skilled data scientist or AI engineer.</p></div><div style="display:contents" dir="auto"><p id="33f6a32b-3eaf-806b-94e0-e145565831b7" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
